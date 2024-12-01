@@ -32,9 +32,9 @@ INPUT_FILE='1-input.txt'
 
 input = [line.split('   ') for line in get_file_contents(INPUT_FILE)[0]]
 transpose_input = [[int(input[j][i]) for j in range(len(input))] for i in range(len(input[0]))]
-new_input = sorted(transpose_input[0]), sorted(transpose_input[1])
+sorted_transpose_input = sorted(transpose_input[0]), sorted(transpose_input[1])
 
-a = reduce(lambda a, x: a + abs(x[1]-x[0]), zip(new_input[0], new_input[1]), 0)
+a = reduce(lambda a, x: a + abs(x[1]-x[0]), zip(sorted_transpose_input[0], sorted_transpose_input[1]), 0)
 print('part a:', a)
 
 c = Counter(transpose_input[1])
