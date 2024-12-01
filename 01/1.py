@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from functools import partial, reduce
 from itertools import chain, cycle, takewhile
 import math
-from operator import mul, ge, gt, itemgetter, le, lt
+from operator import mul, ge, gt, itemgetter, le, lt, sub
 import os
 import pprint
 import re
@@ -28,7 +28,15 @@ if __name__ == '__main__':
         from util import *
 
 INPUT_FILE='1-input.txt'
-INPUT_FILE='1a-example.txt'
+# INPUT_FILE='1a-example.txt'
 
-input = [line for line in get_file_contents(INPUT_FILE)[0]]
-print(input)
+input = [line.split('   ') for line in get_file_contents(INPUT_FILE)[0]]
+transpose_input = [[int(input[j][i]) for j in range(len(input))] for i in range(len(input[0]))]
+new_input = sorted(transpose_input[0]), sorted(transpose_input[1])
+
+a = reduce(lambda a, x: a + abs(x[1]-x[0]), zip(new_input[0], new_input[1]), 0)
+print('part a:', a)
+
+c = Counter(transpose_input[1])
+b = reduce(lambda a, x: a + x * c[x],transpose_input[0], 0)
+print('part b:', b)
