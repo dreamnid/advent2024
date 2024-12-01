@@ -1,0 +1,11 @@
+humanize
+ipython
+ipdb
+requests
+pandas
+numpy
+termcolor
+pyparsing
+
+# dev
+ruff
