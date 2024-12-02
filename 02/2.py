@@ -33,14 +33,14 @@ INPUT_FILE='2-input.txt'
 
 input = [[int(x) for x in line.split(' ')] for line in get_file_contents(INPUT_FILE)[0]]
 
-def check_report(report: list[int], *, bad_level_allowed=False):
+def check_report(report: list[int], *, num_bad_level_allowed=0):
     res = check_report_helper(report)
 
     if res:
         return True
 
     # See if removing any element fixes
-    if bad_level_allowed:
+    if num_bad_level_allowed:
         for i in range(len(report)):
             copy_report = report.copy()
             del copy_report[i]
@@ -126,7 +126,7 @@ def check_report2(report: list[int], *, num_bad_level_allowed=0):
                 del copy_list[i]
                 # print()
                 # print()
-                res_remove_el = check_report(copy_list, num_bad_level_allowed=num_bad_level_allowed-1)
+                res_remove_el = check_report2(copy_list, num_bad_level_allowed=num_bad_level_allowed-1)
 
                 if res_remove_el:
                     return True
@@ -139,13 +139,13 @@ def check_report2(report: list[int], *, num_bad_level_allowed=0):
                     del copy_list[i + 1]
                     # print()
                     # print()
-                    res_remove_el = check_report(copy_list, num_bad_level_allowed=num_bad_level_allowed-1)
+                    res_remove_el = check_report2(copy_list, num_bad_level_allowed=num_bad_level_allowed-1)
                     if res_remove_el:
                         return True
                     if i == 1:
                         copy_list = report.copy()
                         del copy_list[0]
-                        return check_report(copy_list, num_bad_level_allowed=num_bad_level_allowed-1)
+                        return check_report2(copy_list, num_bad_level_allowed=num_bad_level_allowed-1)
                     return False
 
     #     print()
