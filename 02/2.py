@@ -29,28 +29,66 @@ if __name__ == '__main__':
 
 INPUT_FILE='2-input.txt'
 # INPUT_FILE='2a-example.txt'
+INPUT_FILE='2b-example.txt'
 
 input = [[int(x) for x in line.split(' ')] for line in get_file_contents(INPUT_FILE)[0]]
 
-def my_func(my_list: Sequence[int]):
-    diff = my_list[1] - my_list[0]
-    if diff == 0:
-        return False
-    if diff > 0:
-        mode = 1  # Pos
-    else:
-        mode = 0  # Neg
+def check_report(report: list[int], *, num_bad_level_allowed=0):
+    """Return true iif the report is valid"""
+    diff = report[1] - report[0]
+    print('called with', report)
 
-    for i in range(len(my_list)-1):
-        cur_diff = my_list[i+1] - my_list[i]
-        if cur_diff == 0:
+    if diff == 0:
+        # Try the last few element
+        diff = report[-1] - report[-2]
+        if diff == 0:
             return False
-        if mode:
+
+    if diff > 0:
+        mode = True  # Pos
+    else:
+        mode = False  # Neg
+
+    for i in range(len(report)-1):
+        bad_level = False
+        cur_diff = report[i+1] - report[i]
+        # print('i:', i, report[i], end='')
+
+        if cur_diff == 0:
+            bad_level = True
+        elif mode:
             if cur_diff > 3 or cur_diff < 0:
-                return False
+                bad_level = True
         else:
             if cur_diff < -3 or cur_diff > 0:
+                bad_level = True
+
+        if bad_level:
+            if num_bad_level_allowed == 0:
                 return False
+            else:
+                copy_list = report.copy()
+                del copy_list[i]
+                res_remove_el = check_report(copy_list, num_bad_level_allowed=num_bad_level_allowed-1)
+                if i == len(report) - 2:
+                    # Check if we can remove the last element
+                    # print('last')
+                    if res_remove_el:
+                        return True
+                    else:
+                        copy_list = report.copy()
+                        del copy_list[-1]
+                        return check_report(copy_list, num_bad_level_allowed=num_bad_level_allowed-1)
+                else:
+                    # print('return 2', res_remove_el)
+                    return res_remove_el
+        # print()
+    # print()
+    # print('return true')
     return True
 
-print('a: ', sum([my_func(x) for x in input]))
+# print('a: ', sum([check_report(x, num_bad_level_allowed=0) for x in input]))
+input = input[:]
+# pprint.pprint([(x, check_report(x, num_bad_level_allowed=1)) for x in input])
+# pprint.pprint([x for x in input if check_report(x, num_bad_level_allowed=1) is False])
+print('b:', sum([check_report(x, num_bad_level_allowed=1) for x in input]))
