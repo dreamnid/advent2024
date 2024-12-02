@@ -29,14 +29,31 @@ if __name__ == '__main__':
 
 INPUT_FILE='2-input.txt'
 # INPUT_FILE='2a-example.txt'
-INPUT_FILE='2b-example.txt'
+# INPUT_FILE='2b-example.txt'
 
 input = [[int(x) for x in line.split(' ')] for line in get_file_contents(INPUT_FILE)[0]]
 
-def check_report(report: list[int], *, num_bad_level_allowed=0):
+def check_report(report: list[int], *, bad_level_allowed=False):
+    res = check_report_helper(report)
+
+    if res:
+        return True
+
+    # See if removing any element fixes
+    if bad_level_allowed:
+        for i in range(len(report)):
+            copy_report = report.copy()
+            del copy_report[i]
+            res = check_report_helper(copy_report)
+            if res:
+                return True
+
+    return False
+
+def check_report_helper(report: list[int]):
     """Return true iif the report is valid"""
     diff = report[1] - report[0]
-    print('called with', report)
+    # print('called with', report)
 
     if diff == 0:
         # Try the last few element
@@ -64,31 +81,15 @@ def check_report(report: list[int], *, num_bad_level_allowed=0):
                 bad_level = True
 
         if bad_level:
-            if num_bad_level_allowed == 0:
-                return False
-            else:
-                copy_list = report.copy()
-                del copy_list[i]
-                res_remove_el = check_report(copy_list, num_bad_level_allowed=num_bad_level_allowed-1)
-                if i == len(report) - 2:
-                    # Check if we can remove the last element
-                    # print('last')
-                    if res_remove_el:
-                        return True
-                    else:
-                        copy_list = report.copy()
-                        del copy_list[-1]
-                        return check_report(copy_list, num_bad_level_allowed=num_bad_level_allowed-1)
-                else:
-                    # print('return 2', res_remove_el)
-                    return res_remove_el
+            return False
+
         # print()
     # print()
     # print('return true')
     return True
 
-# print('a: ', sum([check_report(x, num_bad_level_allowed=0) for x in input]))
-input = input[:]
+print('a:', sum([check_report(x, bad_level_allowed=False) for x in input]))
+# input = input[:]
 # pprint.pprint([(x, check_report(x, num_bad_level_allowed=1)) for x in input])
 # pprint.pprint([x for x in input if check_report(x, num_bad_level_allowed=1) is False])
-print('b:', sum([check_report(x, num_bad_level_allowed=1) for x in input]))
+print('b:', sum([check_report(x, bad_level_allowed=True) for x in input]))
