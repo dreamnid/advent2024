@@ -92,7 +92,7 @@ def check_report2(report: list[int], *, num_bad_level_allowed=0):
     """
     Return true iif the report is valid
 
-    More optimized version
+    More optimized version but currently take the same time as check_report above
     """
     diff = report[1] - report[0]
     # print('called with', report)
