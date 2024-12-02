@@ -132,10 +132,6 @@ def check_report2(report: list[int], *, num_bad_level_allowed=0):
                     return True
                 else:
                     copy_list = report.copy()
-                    if i == 1:
-                        idx_to_remove = 0
-                    else:
-                        idx_to_remove = i + 1
                     del copy_list[i + 1]
                     # print()
                     # print()
