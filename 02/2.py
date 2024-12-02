@@ -88,8 +88,73 @@ def check_report_helper(report: list[int]):
     # print('return true')
     return True
 
-print('a:', sum([check_report(x, bad_level_allowed=False) for x in input]))
+def check_report2(report: list[int], *, num_bad_level_allowed=0):
+    """
+    Return true iif the report is valid
+
+    More optimized version
+    """
+    diff = report[1] - report[0]
+    # print('called with', report)
+    if diff == 0:
+        # Try the last few element
+        diff = report[-1] - report[-2]
+        if diff == 0:
+            return False
+    if diff > 0:
+        mode = True  # Pos
+    else:
+        mode = False  # Neg
+    for i in range(len(report)-1):
+        bad_level = False
+        cur_diff = report[i+1] - report[i]
+        # print('i:', i, report[i], end='')
+
+        if cur_diff == 0:
+            bad_level = True
+        elif mode:
+            if cur_diff > 3 or cur_diff < 0:
+                bad_level = True
+        else:
+            if cur_diff < -3 or cur_diff > 0:
+                bad_level = True
+        if bad_level:
+            if num_bad_level_allowed == 0:
+                return False
+            else:
+                copy_list = report.copy()
+                del copy_list[i]
+                # print()
+                # print()
+                res_remove_el = check_report(copy_list, num_bad_level_allowed=num_bad_level_allowed-1)
+
+                if res_remove_el:
+                    return True
+                else:
+                    copy_list = report.copy()
+                    if i == 1:
+                        idx_to_remove = 0
+                    else:
+                        idx_to_remove = i + 1
+                    del copy_list[i + 1]
+                    # print()
+                    # print()
+                    res_remove_el = check_report(copy_list, num_bad_level_allowed=num_bad_level_allowed-1)
+                    if res_remove_el:
+                        return True
+                    if i == 1:
+                        copy_list = report.copy()
+                        del copy_list[0]
+                        return check_report(copy_list, num_bad_level_allowed=num_bad_level_allowed-1)
+                    return False
+
+    #     print()
+    # print()
+    # print('return true')
+    return True
+
+print('a:', sum([check_report(x, num_bad_level_allowed=0) for x in input]))
 # input = input[:]
 # pprint.pprint([(x, check_report(x, num_bad_level_allowed=1)) for x in input])
 # pprint.pprint([x for x in input if check_report(x, num_bad_level_allowed=1) is False])
-print('b:', sum([check_report(x, bad_level_allowed=True) for x in input]))
+print('b:', sum([check_report(x, num_bad_level_allowed=1) for x in input]))
