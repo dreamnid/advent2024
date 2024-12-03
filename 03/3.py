@@ -29,7 +29,38 @@ if __name__ == '__main__':
 
 INPUT_FILE='3-input.txt'
 # INPUT_FILE='3a-example.txt'
+# INPUT_FILE='3b-example.txt'
 
-input = [line for line in get_file_contents(INPUT_FILE)[0]]
+input = ''.join(get_file_contents(INPUT_FILE)[0])
 mul_regex = re.compile(r'mul\((\d+),(\d+)\)')
-print('a:', sum([int(x) * int(y) for line in input for x, y in mul_regex.findall(line)]))
+print('a:', sum([int(x) * int(y) for x, y in mul_regex.findall(input)]))
+
+status = True
+buf = input
+start = 0
+
+res: list[int] = []
+while True:
+    end = remain_len = len(buf) - 1
+    if status:
+        try:
+            end = buf.index("don't()", start, end) + len("don't()")
+            next_status = False
+        except ValueError:
+            end = remain_len
+
+        res.extend([int(x) * int(y) for x, y in mul_regex.findall(buf[:end], start, end)])
+    else:
+        try:
+            end = buf.index("do()", start, end) + len("do()")
+            next_status = True
+        except ValueError:
+            end = remain_len
+
+    if end == remain_len:
+        break
+
+    start = end
+    status = next_status
+
+print('b:', sum(res))
