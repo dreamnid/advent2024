@@ -1,5 +1,7 @@
 # Day 3
 
+part2_b() was another attempt just using the regex matches based off KC + KG solutions
+
 ## Performance
 ```bash
 adventofcode➜  03 git:(main) ✗ time python ./3.py
