@@ -64,7 +64,7 @@ def part_2():
 
         start = end
         status = next_status
-    return res
+    return sum(res)
 
 def part_2_alt():
     enabled = True
