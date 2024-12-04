@@ -18,15 +18,30 @@ INPUT_FILE = "4-input.txt"
 
 
 def xmas_checker(matrix: list[str], cur_row: int, cur_col: int):
+    """
+    Check if "XMAS" appears in all orientations from the specified position
+
+    The orientations can be horizontal, vertical, and diagonal
+
+    May also appear backwards
+    """
+    def helper(
+        matrix: list[str], cur_row: int, cur_col: int, row_incr: int, col_incr: int
+    ):
+        CHECK_WORD = "XMAS"
+        for i in range(len(CHECK_WORD)):
+            if matrix[cur_row + i * row_incr][cur_col + i * col_incr] != CHECK_WORD[i]:
+                return False
+        return True
     return [
-        checker_helper(matrix, cur_row, cur_col, row_incr=0, col_incr=1),
-        checker_helper(matrix, cur_row, cur_col, row_incr=0, col_incr=-1),
-        checker_helper(matrix, cur_row, cur_col, row_incr=1, col_incr=0),
-        checker_helper(matrix, cur_row, cur_col, row_incr=-1, col_incr=0),
-        checker_helper(matrix, cur_row, cur_col, row_incr=1, col_incr=1),
-        checker_helper(matrix, cur_row, cur_col, row_incr=-1, col_incr=-1),
-        checker_helper(matrix, cur_row, cur_col, row_incr=1, col_incr=-1),
-        checker_helper(matrix, cur_row, cur_col, row_incr=-1, col_incr=1),
+        helper(matrix, cur_row, cur_col, row_incr=0, col_incr=1),
+        helper(matrix, cur_row, cur_col, row_incr=0, col_incr=-1),
+        helper(matrix, cur_row, cur_col, row_incr=1, col_incr=0),
+        helper(matrix, cur_row, cur_col, row_incr=-1, col_incr=0),
+        helper(matrix, cur_row, cur_col, row_incr=1, col_incr=1),
+        helper(matrix, cur_row, cur_col, row_incr=-1, col_incr=-1),
+        helper(matrix, cur_row, cur_col, row_incr=1, col_incr=-1),
+        helper(matrix, cur_row, cur_col, row_incr=-1, col_incr=1),
     ]
 
 
@@ -58,16 +73,6 @@ def x_mas_checker(matrix: list[str], cur_row: int, cur_col: int):
         == side2_count["S"]
         == 1
     )
-
-
-def checker_helper(
-    matrix: list[str], cur_row: int, cur_col: int, row_incr: int, col_incr: int
-):
-    CHECK_WORD = "XMAS"
-    for i in range(len(CHECK_WORD)):
-        if matrix[cur_row + i * row_incr][cur_col + i * col_incr] != CHECK_WORD[i]:
-            return False
-    return True
 
 
 # Add padding and upper case input
