@@ -1,5 +1,6 @@
+from datetime import timedelta
 import json
-import time
+from time import process_time
 
 def get_file_contents(file: str) -> list[list[str]]:
     """
@@ -78,10 +79,10 @@ class PrintTiming:
         self.name = name
 
     def __enter__(self):
-        self.timer = time()
+        self.timer = process_time()
 
     def __exit__(self, exc_type, exc_value, traceback):
-        print('timer: ', time() - self.timer)
+        print(f'timer{" " if self.name else ""}{self.name if self.name else ""}: ', timedelta(seconds=process_time() - self.timer))
 
 
 def get_neighbors(matrix, cur_row, cur_col):
@@ -118,7 +119,7 @@ def get_neighbors_with_pos(matrix, cur_row, cur_col):
     return res
 
 
-def add_padding(matrix, pad_value='.'): 
+def add_padding(matrix, pad_value='.'):
     """
     Surround the 2d array with the pad_value
 
