@@ -1,16 +1,4 @@
 #!/usr/bin/env python3
-from collections import Counter, defaultdict, deque
-from collections.abc import Callable, Collection, Iterable, Sequence
-from dataclasses import dataclass
-from functools import partial, reduce
-from itertools import chain, cycle, takewhile
-import math
-from operator import mul, ge, gt, itemgetter, le, lt
-import os
-import pprint
-import re
-from time import time
-from typing import NamedTuple
 
 # Fix path so we can do a relative import: https://stackoverflow.com/a/27876800
 if __name__ == '__main__':
@@ -56,17 +44,6 @@ for update in updates:
 with PrintTiming('a'):
     print('a:', sum(map(get_middle_el, correct_updates)))
 
-before_map: dict[int, set[int]] = defaultdict(set)
-"""the children must appear before the key"""
-after_map: dict[int, set[int]] = defaultdict(set)
-"""the children must appear after the key"""
-for rule in rules:
-    after_map[rule[0]].add(rule[1])
-    before_map[rule[1]].add(rule[0])
-
-# print('after', after_map)
-# print('before', before_map)
-
 def fix_pages(pages: list[int]):
     changed = True
     while changed:
@@ -74,7 +51,6 @@ def fix_pages(pages: list[int]):
 
         for rule in rules:
             try:
-                # print(rule)
                 first_pos = pages.index(rule[0])
                 last_pos = pages.index(rule[1])
                 if first_pos > last_pos:
