@@ -12,11 +12,6 @@ import re
 from time import time
 from typing import NamedTuple
 
-from humanize import intcomma
-import numpy as np
-import pyparsing as pp
-import pandas as pd
-
 # Fix path so we can do a relative import: https://stackoverflow.com/a/27876800
 if __name__ == '__main__':
     if not __package__:
@@ -50,5 +45,54 @@ def get_middle_el(my_list: list):
     return my_list[idx]
 
 
-middle_filtered = [get_middle_el(update) for update in updates if check_rules(update)]
-print('a:', sum(middle_filtered))
+correct_updates: list[list[int]] = []
+wrong_updates: list[list[int]] = []
+for update in updates:
+    if check_rules(update):
+        correct_updates.append(update)
+    else:
+        wrong_updates.append(update)
+
+with PrintTiming('a'):
+    print('a:', sum(map(get_middle_el, correct_updates)))
+
+before_map: dict[int, set[int]] = defaultdict(set)
+"""the children must appear before the key"""
+after_map: dict[int, set[int]] = defaultdict(set)
+"""the children must appear after the key"""
+for rule in rules:
+    after_map[rule[0]].add(rule[1])
+    before_map[rule[1]].add(rule[0])
+
+# print('after', after_map)
+# print('before', before_map)
+
+def fix_pages(pages: list[int]):
+    changed = True
+    while changed:
+        changed = False
+
+        for rule in rules:
+            try:
+                # print(rule)
+                first_pos = pages.index(rule[0])
+                last_pos = pages.index(rule[1])
+                if first_pos > last_pos:
+                    # print('old', pages)
+                    del pages[first_pos]
+                    pages.insert(last_pos, rule[0])
+                    # print('new', pages)
+                    changed = True
+
+            except ValueError:
+                pass
+
+# print(wrong_updates)
+for update in wrong_updates:
+    fix_pages(update)
+    # break
+# fix_pages(wrong_updates[2])
+
+#o print(wrong_updates)
+with PrintTiming('b'):
+    print('b:', sum(map(get_middle_el, wrong_updates)))
