@@ -1,23 +1,8 @@
 #!/usr/bin/env python3
-from collections import Counter, defaultdict, deque
-from collections.abc import Callable, Collection, Iterable, Sequence
+from collections import defaultdict
 from copy import deepcopy
-from dataclasses import dataclass
 from enum import Enum
-from functools import partial, reduce
-from itertools import chain, cycle, takewhile
-import math
-from operator import mul, ge, gt, itemgetter, le, lt
-import os
-import pprint
-import re
-from time import time
-from typing import NamedTuple
 
-from humanize import intcomma
-import numpy as np
-import pyparsing as pp
-import pandas as pd
 
 # Fix path so we can do a relative import: https://stackoverflow.com/a/27876800
 if __name__ == '__main__':
@@ -98,6 +83,7 @@ def solver(cur_input: list[list[str]], cur_pos, cur_val: str, cur_dir: Dir):
                 cur_char = next_char
                 cur_pos = next_pos
         if cur_pos in visited and cur_dir in visited[cur_pos]:
+            # This will result in a loop and will never exit so return None
             return None
     return num_pos
 
