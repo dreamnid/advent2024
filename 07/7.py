@@ -32,7 +32,7 @@ INPUT_FILE='7-input.txt'
 
 input = [line for line in get_file_contents(INPUT_FILE)[0]]
 
-def solver(nums: list[int], desired: int, cur_answer: int):
+def solver(nums: list[int], desired: int, cur_answer: int, enable_concat=False):
     cur_answer = nums.pop(0)
 
     queue = [(nums, cur_answer)]
@@ -42,31 +42,49 @@ def solver(nums: list[int], desired: int, cur_answer: int):
 
         if not nums:
             if cur_answer == desired:
-                return True
+                return cur_answer
             elif queue:
                 continue
             else:
-                return False
+                return cur_answer
 
         cur_num = nums.pop(0)
         add_answer = cur_num + cur_answer
-        if add_answer <= desired:
-            queue.append((nums.copy(), add_answer))
+        queue.append((nums.copy(), add_answer))
 
         mul_answer = cur_answer * cur_num
-        if mul_answer <= desired:
-            queue.append((nums.copy(), mul_answer))
+        queue.append((nums.copy(), mul_answer))
+
+        if enable_concat:
+            concat_answer = str(cur_answer) + str(cur_num)
+            if str(desired).startswith(concat_answer):
+                queue.append((nums.copy(), int(concat_answer)))
 
     return False
 
-res = 0
-for eq_i, eq in enumerate(input):
-    desired, nums = eq.split(': ')
-    desired_int = int(desired)
-    temp_res = solver([int(num) for num in nums.split(' ')], desired_int, 0)
-    if temp_res:
-        res += desired_int
-
+with PrintTiming('a'):
+    res = 0
+    for eq_i, eq in enumerate(input):
+        desired, nums = eq.split(': ')
+        desired_int = int(desired)
+        temp_res = solver([int(num) for num in nums.split(' ')], desired_int, 0, enable_concat=False)
+        # print(desired, ':', temp_res, ':', nums)
+        if temp_res == desired_int:
+            res += desired_int
+            # print(eq_i, res)
 
 print('a:', res)
 
+
+with PrintTiming('b'):
+    res = 0
+    for eq_i, eq in enumerate(input):
+        desired, nums = eq.split(': ')
+        desired_int = int(desired)
+        temp_res = solver([int(num) for num in nums.split(' ')], desired_int, 0, enable_concat=True)
+        # print(desired, ':', temp_res, ':', nums)
+        if temp_res == desired_int:
+            res += desired_int
+            # print(eq_i, res)
+
+print('b:', res)
