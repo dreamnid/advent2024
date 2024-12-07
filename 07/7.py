@@ -56,9 +56,9 @@ def solver(nums: list[int], desired: int, cur_answer: int, enable_concat=False):
         queue.append((nums.copy(), mul_answer))
 
         if enable_concat:
-            concat_answer = str(cur_answer) + str(cur_num)
-            if str(desired).startswith(concat_answer):
-                queue.append((nums.copy(), int(concat_answer)))
+            concat_answer = int(str(cur_answer) + str(cur_num))
+            if concat_answer <= desired:
+                queue.append((nums.copy(), concat_answer))
 
     return False
 
