@@ -32,6 +32,7 @@ INPUT_FILE='8-input.txt'
 # INPUT_FILE='8a2-example.txt'
 # INPUT_FILE='8a3-example.txt'
 # INPUT_FILE='8a4-example.txt'
+# INPUT_FILE='8b-example.txt'
 
 file_contents = get_file_contents(INPUT_FILE)[0]
 height = len(file_contents)
@@ -60,24 +61,61 @@ def has_antinodes(point1: Point, point2: Point):
     return abs(dist[0]) > 0 or abs(dist[1]) > 0
 
 
-antinode_positions = defaultdict(list)
-unique_global_antinode_positions = set()
-antinode_count = 0
-for val, positions in nodes.items():
-    for pos1, pos2 in combinations(positions, 2):
-        if has_antinodes(pos1, pos2):
-            # print(pos1, pos2, f' create anti nodes')
-            dist = get_dist(pos1, pos2)
-            cur_pos = pos1[0] - dist[0], pos1[1] - dist[1]
-            if cur_pos[0] >= 0 and cur_pos[0] < height and cur_pos[1] >= 0 and cur_pos[1] < width:
-                # print('add antinode', cur_pos)
-                antinode_positions[val].append(cur_pos)
-                unique_global_antinode_positions.add(cur_pos)
+def solve_a():
+    antinode_positions = defaultdict(list)
+    unique_global_antinode_positions = set()
+    antinode_count = 0
+    for val, positions in nodes.items():
+        for pos1, pos2 in combinations(positions, 2):
+            if has_antinodes(pos1, pos2):
+                # print(pos1, pos2, f' create anti nodes')
+                dist = get_dist(pos1, pos2)
+                cur_pos = pos1[0] - dist[0], pos1[1] - dist[1]
+                if cur_pos[0] >= 0 and cur_pos[0] < height and cur_pos[1] >= 0 and cur_pos[1] < width:
+                    # print('add antinode', cur_pos)
+                    antinode_positions[val].append(cur_pos)
+                    unique_global_antinode_positions.add(cur_pos)
 
-            cur_pos = pos2[0] + dist[0], pos2[1] + dist[1]
-            if cur_pos[0] >= 0 and cur_pos[0] < height and cur_pos[1] >= 0 and cur_pos[1] < width:
-                # print('add antinode', cur_pos)
-                antinode_positions[val].append(cur_pos)
-                unique_global_antinode_positions.add(cur_pos)
-print('a:', len(unique_global_antinode_positions))
+                cur_pos = pos2[0] + dist[0], pos2[1] + dist[1]
+                if cur_pos[0] >= 0 and cur_pos[0] < height and cur_pos[1] >= 0 and cur_pos[1] < width:
+                    # print('add antinode', cur_pos)
+                    antinode_positions[val].append(cur_pos)
+                    unique_global_antinode_positions.add(cur_pos)
+    print('a:', len(unique_global_antinode_positions))
+
+solve_a()
+
+def solve_b():
+    antinode_positions = defaultdict(list)
+    unique_global_antinode_positions = set()
+    antinode_count = 0
+    for val, positions in nodes.items():
+        for pos1, pos2 in combinations(positions, 2):
+            if has_antinodes(pos1, pos2):
+                # print(pos1, pos2, f' create anti nodes')
+                unique_global_antinode_positions.add(pos1)
+                unique_global_antinode_positions.add(pos2)
+                dist = get_dist(pos1, pos2)
+                cur_pos = pos1
+                while True:
+                    cur_pos = cur_pos[0] - dist[0], cur_pos[1] - dist[1]
+                    if cur_pos[0] >= 0 and cur_pos[0] < height and cur_pos[1] >= 0 and cur_pos[1] < width:
+                        # print('add antinode', cur_pos)
+                        antinode_positions[val].append(cur_pos)
+                        unique_global_antinode_positions.add(cur_pos)
+                    else:
+                        break
+
+                cur_pos = pos2
+                while True:
+                    cur_pos = cur_pos[0] + dist[0], cur_pos[1] + dist[1]
+                    if cur_pos[0] >= 0 and cur_pos[0] < height and cur_pos[1] >= 0 and cur_pos[1] < width:
+                        # print('add antinode', cur_pos)
+                        antinode_positions[val].append(cur_pos)
+                        unique_global_antinode_positions.add(cur_pos)
+                    else:
+                        break
+    print('b:', len(unique_global_antinode_positions))
+
+solve_b()
 # pprint.pprint(antinode_postions)
