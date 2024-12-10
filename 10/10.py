@@ -31,10 +31,12 @@ INPUT_FILE='10-input.txt'
 # INPUT_FILE='10a-example.txt'
 # INPUT_FILE='10a2-example.txt'
 # INPUT_FILE='10a3-example.txt'
+# INPUT_FILE='10b1-example.txt'
+# INPUT_FILE='10b2-example.txt'
 
 input = add_padding([[int(col) if col != '.' else None for col in line] for line in get_file_contents(INPUT_FILE)[0]])
 
-def find_score(input, row_i, col_i, cur_step=0, visited=None):
+def find_score(input, row_i, col_i, cur_step=0, visited=None, shared_visited=False):
     if visited is None:
         visited = set()
     visited.add((row_i, col_i))
@@ -43,24 +45,38 @@ def find_score(input, row_i, col_i, cur_step=0, visited=None):
         # pprint.pprint(visited)
         return 1
 
+    if not shared_visited:
+        visited = visited.copy()
+
     res = 0
     if input[row_i][col_i + 1] == cur_step + 1 and (row_i, col_i + 1) not in visited:
-        res += find_score(input, row_i, col_i + 1, cur_step + 1, visited)
+        res += find_score(input, row_i, col_i + 1, cur_step + 1, visited, shared_visited=shared_visited)
     if input[row_i+1][col_i] == cur_step + 1 and (row_i+1, col_i) not in visited:
-        res += find_score(input, row_i + 1, col_i, cur_step + 1, visited)
+        res += find_score(input, row_i + 1, col_i, cur_step + 1, visited, shared_visited=shared_visited)
     if input[row_i][col_i-1] == cur_step + 1 and (row_i, col_i-1) not in visited:
-        res += find_score(input, row_i, col_i - 1, cur_step + 1, visited)
+        res += find_score(input, row_i, col_i - 1, cur_step + 1, visited, shared_visited=shared_visited)
     if input[row_i-1][col_i] == cur_step + 1 and (row_i-1, col_i) not in visited:
-        res += find_score(input, row_i - 1, col_i, cur_step + 1, visited)
+        res += find_score(input, row_i - 1, col_i, cur_step + 1, visited, shared_visited=shared_visited)
 
     return res
 
 res: list[int] = []
 # pprint.pprint(input)
-for row_i, row in enumerate(input):
-    for col_i, col in enumerate(row):
-        if col == 0:
-            if (score := find_score(input, row_i, col_i)):
-                res.append(score)
+
+with PrintTiming('a'):
+    for row_i, row in enumerate(input):
+        for col_i, col in enumerate(row):
+            if col == 0:
+                if (score := find_score(input, row_i, col_i, shared_visited=True)):
+                    res.append(score)
 
 print('a:', sum(res))
+
+res2: list[int] = []
+with PrintTiming('a'):
+    for row_i, row in enumerate(input):
+        for col_i, col in enumerate(row):
+            if col == 0:
+                if (score := find_score(input, row_i, col_i, shared_visited=False)):
+                    res2.append(score)
+print('b:', sum(res2))
