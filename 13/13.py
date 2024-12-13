@@ -34,7 +34,7 @@ file_contents = get_file_contents(INPUT_FILE)
 movement_re = re.compile(r'X([+-]\d+), Y([+-]\d+)')
 prize_re = re.compile(r'Prize: X=(\d+), Y=(\d+)')
 
-with PrintTiming('a'):
+def solver(part_b=False):
     coins = []
     for machine_num in range(len(file_contents)):
         input = [line for line in get_file_contents(INPUT_FILE)[machine_num]]
@@ -42,7 +42,7 @@ with PrintTiming('a'):
         button_a_move = int(button_a_re.group(1)), int(button_a_re.group(2))
         button_b_re = movement_re.search(input[1])
         button_b_move = int(button_b_re.group(1)), int(button_b_re.group(2))
-        prize_coord = tuple(int(j) for j in prize_re.findall(input[2])[0])
+        prize_coord = tuple(int(j) + (10000000000000 if part_b else 0) for j in prize_re.findall(input[2])[0])
 
         i = 0
         done = False
@@ -62,13 +62,18 @@ with PrintTiming('a'):
                 j += 1
             if done:
                 break
-            if i > 100 or button_a_move[0] * i > prize_coord[0] or button_a_move[1] * i > prize_coord[1]:
+            if button_a_move[0] * i > prize_coord[0] or button_a_move[1] * i > prize_coord[1]:
                 break
             i += 1
 
         if done:
             coins.append(i*3 + j)
-            # print('a count', i)
-            # print('b count', j)
+            print('a count', i)
+            print('b count', j)
+    return coins
 
-print('a', sum(coins))
+with PrintTiming('a'):
+    print('a', sum(solver()))
+
+with PrintTiming('b'):
+    print('b', sum(solver(part_b=True)))
