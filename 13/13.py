@@ -28,7 +28,7 @@ if __name__ == '__main__':
         from util import *
 
 INPUT_FILE='13-input.txt'
-# INPUT_FILE='13a-example.txt'
+INPUT_FILE='13a-example.txt'
 
 file_contents = get_file_contents(INPUT_FILE)
 movement_re = re.compile(r'X([+-]\d+), Y([+-]\d+)')
@@ -47,8 +47,8 @@ def solver(part_b=False):
         i = 0
         done = False
         while True:
-            j = 0
-            while True:
+            j = (prize_coord[0] - (button_a_move[0] * i)) / button_b_move[0]
+            if j.is_integer():
                 x = button_a_move[0] * i
                 y = button_a_move[1] * i
                 x += button_b_move[0] * j
@@ -57,9 +57,6 @@ def solver(part_b=False):
                 if x == prize_coord[0] and y == prize_coord[1]:
                     done = True
                     break
-                elif x > prize_coord[0] or y > prize_coord[1]:
-                    break
-                j += 1
             if done:
                 break
             if button_a_move[0] * i > prize_coord[0] or button_a_move[1] * i > prize_coord[1]:
