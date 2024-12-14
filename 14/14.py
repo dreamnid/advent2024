@@ -98,91 +98,91 @@ Y_AXIS_COL = 50
 found = False
 counter = 0
 max_len_num_of_col_by_row = 100000
-# for _ in range(7 * 11):
-while not found:
-    counter += 1
-    if counter % 100 == 0:
-        print(counter)
-    # found = True
-    col_by_row = defaultdict(set)
-    # new_pos = [robot.pos for robot in robots]
-    new_pos = [robot.move() for robot in robots]
-    num_of_col_by_row = defaultdict(int)
+with PrintTiming('b'):
+    while not found:
+        counter += 1
+        # if counter % 100 == 0:
+        #     print(counter)
+        # found = True
+        col_by_row = defaultdict(set)
+        # new_pos = [robot.pos for robot in robots]
+        new_pos = [robot.move() for robot in robots]
+        num_of_col_by_row = defaultdict(int)
 
-    for cur_pos in new_pos:
-        col_by_row[cur_pos.row].add(cur_pos.col)
+        for cur_pos in new_pos:
+            col_by_row[cur_pos.row].add(cur_pos.col)
 
-        streak = 0
-        streak_count = 0
-        prev_num = None
-        # Find rows with consecutive drones
-        for cur_num in sorted(col_by_row[cur_pos.row]):
-           if prev_num is None:
-               prev_num = cur_num
-           elif cur_num != prev_num + 1:
-               if streak == 15:
-                   streak_count += 1
-                   if streak_count == 1:
-                       found = True
-                       break
-                   print('counter', counter)
-                   for row in range(total_rows):
-                       for col in range(total_cols):
-                           print('#' if col in col_by_row[row] else '.', end='')
+            streak = 0
+            streak_count = 0
+            prev_num = None
+            # Find rows with consecutive drones
+            for cur_num in sorted(col_by_row[cur_pos.row]):
+               if prev_num is None:
+                   prev_num = cur_num
+               elif cur_num != prev_num + 1:
+                   if streak == 15:
+                       streak_count += 1
+                       if streak_count == 1:
+                           found = True
+                           break
+                       print('counter', counter)
+                       for row in range(total_rows):
+                           for col in range(total_cols):
+                               print('#' if col in col_by_row[row] else '.', end='')
+                           print('')
                        print('')
-                   print('')
-                   print('/////////////////////////////////////')
-               streak = 0
-           else:
-               pass
+                       print('/////////////////////////////////////')
+                   streak = 0
+               else:
+                   pass
 
-           prev_num = cur_num
-           streak += 1
+               prev_num = cur_num
+               streak += 1
 
-        # match len(col_by_row[cur_pos.row]):
-        #     case 0:
-        #         # found = False
-        #         pass
-        #     case 1:
-        #         # found = False
-        #         pass
-        #     # case 2:
-        #     #     # found &= abs(col_by_row[cur_pos.row][0] - Y_AXIS_COL) == abs(col_by_row[cur_pos.row][1] - Y_AXIS_COL)
-        #     #     # found = False
-        #     #     pass
-        #     case 2:
-        #         # print('4')
-        #         prev_num = None
-        #         # found = True
-        #         # print(sorted(col_by_row[cur_pos.row]))
-        #         for cur_num in sorted(col_by_row[cur_pos.row]):
-        #             if prev_num is None:
-        #                 prev_num = cur_num
+            # match len(col_by_row[cur_pos.row]):
+            #     case 0:
+            #         # found = False
+            #         pass
+            #     case 1:
+            #         # found = False
+            #         pass
+            #     # case 2:
+            #     #     # found &= abs(col_by_row[cur_pos.row][0] - Y_AXIS_COL) == abs(col_by_row[cur_pos.row][1] - Y_AXIS_COL)
+            #     #     # found = False
+            #     #     pass
+            #     case 2:
+            #         # print('4')
+            #         prev_num = None
+            #         # found = True
+            #         # print(sorted(col_by_row[cur_pos.row]))
+            #         for cur_num in sorted(col_by_row[cur_pos.row]):
+            #             if prev_num is None:
+            #                 prev_num = cur_num
+            #
+            #                 continue
+            #             if cur_num != prev_num + 1:
+            #                 break
+            #         else:
+            #             found = True
+            #
+            #
+            #     case _:
+            #         found = False
+        # for temp_row in col_by_row.keys():
+        #     num_of_col_by_row[len(col_by_row[temp_row])] += 1
         #
-        #                 continue
-        #             if cur_num != prev_num + 1:
-        #                 break
-        #         else:
-        #             found = True
-        #
-        #
-        #     case _:
-        #         found = False
-    # for temp_row in col_by_row.keys():
-    #     num_of_col_by_row[len(col_by_row[temp_row])] += 1
-    #
-    # if len(num_of_col_by_row) < max_len_num_of_col_by_row:
-    #     max_len_num_of_col_by_row = len(num_of_col_by_row)
-    #     print('new max len', max_len_num_of_col_by_row)
-    # if num_of_col_by_row[2] >= 25:
-    #     pprint.pprint(num_of_col_by_row)
-    #     found = True
+        # if len(num_of_col_by_row) < max_len_num_of_col_by_row:
+        #     max_len_num_of_col_by_row = len(num_of_col_by_row)
+        #     print('new max len', max_len_num_of_col_by_row)
+        # if num_of_col_by_row[2] >= 25:
+        #     pprint.pprint(num_of_col_by_row)
+        #     found = True
 
 
-for row in range(total_rows):
-    for col in range(total_cols):
-        print('#' if col in col_by_row[row] else '.', end='')
+    for row in range(total_rows):
+        for col in range(total_cols):
+            print('#' if col in col_by_row[row] else '.', end='')
+        print('')
     print('')
-print('')
-print('/////////////////////////////////////')
-print('b:', counter)
+    print('/////////////////////////////////////')
+    print('b:', counter)
