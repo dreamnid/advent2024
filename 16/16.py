@@ -1,22 +1,8 @@
 #!/usr/bin/env python3
-from collections import Counter, defaultdict, deque
-from collections.abc import Callable, Collection, Iterable, Sequence
 from dataclasses import dataclass
-from enum import StrEnum, IntEnum
-from functools import partial, reduce
-from itertools import chain, cycle, takewhile
-import math
-from operator import mul, ge, gt, itemgetter, le, lt, attrgetter
-import os
-import pprint
-import re
-from time import time
+from enum import IntEnum
+from operator import attrgetter
 from typing import NamedTuple
-
-from humanize import intcomma
-import numpy as np
-import pyparsing as pp
-import pandas as pd
 
 # Fix path so we can do a relative import: https://stackoverflow.com/a/27876800
 if __name__ == '__main__':
@@ -95,8 +81,10 @@ with PrintTiming('a'):
             cost = cur_data.cost + 1
             if next_move[0].row == 7 and next_move[0].col == 15 and False:
                 print(cost, lowest_cost_for_pos[next_move[0]] if next_move[0] in lowest_cost_for_pos else 'inf', cur_data.path)
+            # The lowest_cost_for_pos ideally should have the cost with the turn, but that information happens too late
+            #       so simple solution is expand the check by 1000.
+            # TODO: See if there is a way to only apply 1000 in certain situations (may run into the same problem)
             if next_move[0] not in lowest_cost_for_pos or (cost <= lowest_cost_for_pos[next_move[0]] + 1000):
-
                 lowest_cost_for_pos[next_move[0]] = cost
                 if cur_data.last_dir != next_move[1]:
                     if next_move[0].row == 6 and False:
@@ -121,6 +109,7 @@ best_tiles = set()
 for data in best_data:
     best_tiles.update(data.path)
 
+# Print grid with best tiles marked as 'O'
 # for row_i, row in enumerate(input):
 #     for col_i, col in enumerate(row):
 #         if col == '.':
