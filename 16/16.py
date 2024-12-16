@@ -77,7 +77,7 @@ for row_i, row in enumerate(input):
 
 with PrintTiming('a'):
     queue = [Data(path=[cur_pos], visited=set(), cost=0, last_dir=Dir.RIGHT)]
-    lowest_cost_for_pos = defaultdict(lambda: float('inf'))
+    lowest_cost_for_pos = dict()
     finished = []
     while queue:
         cur_data = queue.pop(0)
@@ -93,10 +93,18 @@ with PrintTiming('a'):
         copy_data = len(next_moves) > 1
         for next_move in next_moves:
             cost = cur_data.cost + 1
-            if cur_data.last_dir != next_move[1]:
-                cost += 1000
-            if cost < lowest_cost_for_pos[next_move[0]]:
+            if next_move[0].row == 7 and next_move[0].col == 15 and False:
+                print(cost, lowest_cost_for_pos[next_move[0]] if next_move[0] in lowest_cost_for_pos else 'inf', cur_data.path)
+            if next_move[0] not in lowest_cost_for_pos or (cost <= lowest_cost_for_pos[next_move[0]] + 1000):
+
                 lowest_cost_for_pos[next_move[0]] = cost
+                if cur_data.last_dir != next_move[1]:
+                    if next_move[0].row == 6 and False:
+                        print('add 1000', Dir(cur_data.last_dir), next_move)
+                    cost += 1000
+                    # print('before', Pos(cur_data.path[-1].row, cur_data.path[-1].col), lowest_cost_for_pos[Pos(cur_data.path[-1].row, cur_data.path[-1].col)] if Pos(cur_data.path[-1].row, cur_data.path[-1].col) in lowest_cost_for_pos else '#')
+                    lowest_cost_for_pos[Pos(cur_data.path[-1].row, cur_data.path[-1].col)] = cost - 1
+                    # print('after', Pos(cur_data.path[-1].row, cur_data.path[-1].col), lowest_cost_for_pos[Pos(cur_data.path[-1].row, cur_data.path[-1].col)])
                 next_path = cur_data.path.copy() if copy_data else cur_data.path
                 next_path.append(next_move[0])
 
@@ -104,4 +112,21 @@ with PrintTiming('a'):
                 queue.append(Data(path=next_path, visited=next_visited, cost=cost, last_dir=next_move[1]))
 
 # pprint.pprint(sorted(finished, key=lambda x: x.cost)[0])
-print('a:', sorted(finished, key=attrgetter('cost'))[0].cost)
+best_cost_data = sorted(finished, key=attrgetter('cost'))
+print('a:', best_cost_data[0].cost, best_cost_data[1].cost)
+# pprint.pprint(best_cost_data.path)
+
+best_data = [data for data in best_cost_data if data.cost == best_cost_data[0].cost]
+best_tiles = set()
+for data in best_data:
+    best_tiles.update(data.path)
+
+# for row_i, row in enumerate(input):
+#     for col_i, col in enumerate(row):
+#         if col == '.':
+#             print('O' if Pos(row_i, col_i) in best_tiles else '.', end='')
+#         else:
+#             print(col, end='')
+#     print()
+
+print('b:', len(best_tiles))
