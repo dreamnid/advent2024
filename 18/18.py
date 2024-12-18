@@ -1,23 +1,6 @@
 #!/usr/bin/env python3
 import heapq
-from collections import Counter, defaultdict, deque
-from collections.abc import Callable, Collection, Iterable, Sequence
-from dataclasses import dataclass
-from enum import IntEnum
-from functools import partial, reduce
-from itertools import chain, cycle, takewhile
-import math
-from operator import mul, ge, gt, itemgetter, le, lt, attrgetter
-import os
-import pprint
-import re
-from time import time
 from typing import NamedTuple, TypeVar
-
-from humanize import intcomma
-import numpy as np
-import pyparsing as pp
-import pandas as pd
 
 # Fix path so we can do a relative import: https://stackoverflow.com/a/27876800
 if __name__ == '__main__':
@@ -138,16 +121,24 @@ def a_star(input, start: Pos, end: Pos):
 
 
 with PrintTiming('a'):
-    _, cost = a_star(input[:first_bytes], Pos(0, 0), Pos(size-1, size-1))
+    new_path_nodes, cost = a_star(input[:first_bytes], Pos(0, 0), Pos(size-1, size-1))
 
 print('a:', cost[Pos(size-1, size-1)])
 
 with PrintTiming('b'):
     try:
-        real_input = set(input[:first_bytes])
+        path_nodes = new_path_nodes.values()
         for cur_first_bytes in range(first_bytes + 1, len(input)):
-            _, cost = a_star(real_input, Pos(0, 0), Pos(size-1, size-1))
-    except:
+            real_input = set(input[:cur_first_bytes])
+            # See if new node will block the current path
+            if input[cur_first_bytes] in path_nodes and len(get_neighbors(real_input, input[cur_first_bytes])) < 3:
+                new_came_from, _ = a_star(real_input, Pos(0, 0), Pos(size-1, size-1))
+                path_nodes = new_path_nodes.values()
+            else:
+                # print('skip')
+                pass
+    except Exception as e:
+        # print(e, cur_first_bytes, get_neighbors(real_input, input[cur_first_bytes]))
         pass
     block_y, block_x = input[cur_first_bytes - 1]
 
