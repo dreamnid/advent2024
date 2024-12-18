@@ -3,3 +3,68 @@ Register B: 0
 Register C: 0
 
 Program: 2,4,1,7,7,5,0,3,4,4,1,7,5,5,3,0
+
+2, 1, 7, 0, 4, 1, 5, 3
+BST, BXL, CDV (A), ADV (A), BXC, BXL, OUT, JNZ (A)
+
+BST 4: A % 8 = 4 % 8 = 4 -> B
+Register A: 52042868
+Register B: 4
+Register C: 0
+
+BXL 7: B ^ 7 = 4 ^ 7 = 3 -> B
+Register A: 52042868
+Register B: 3
+Register C: 0
+
+111
+010
+B = 2 to get B = 5
+
+CDV 5: A // 2 ** B =  52042868 // 2**3 = 52042868 // 8 = 6505358 -> C
+52042868 / 2^3 -> 52042868 / 8 = 6505358
+Register A: 52042868
+Register B: 3
+Register C: 6505358 (0b11000110100001110001110)
+
+ADV 3: A // 2 ** 3 = 6505358 // 8 = 6505358 -> A
+Register A: 6505358
+Register B: 3       0b00000000000000000000011
+Register C: 6505358 0b11000110100001110001110
+
+BXC 4: B ^ C = 3 ^ 6505358 = 6505357 -> B
+Register A: 6505358
+Register B: 6505357 0b11000110100001110001101
+Register C: 6505358 0b11000110100001110001110
+
+BXL 7: B ^ 7 = 6505357 ^ 7 = 6505354 -> B
+Register A: 6505358
+Register B: 6505354 0b11000110100001110001010
+Register C: 6505358 0b11000110100001110001110
+
+111
+101
+want b = 5 to get desired 2 for b
+
+OUT 5: B % 8 -> OUT
+4 % 8 == 4
+
+A % 8 seq
+
+15:
+B = 3
+B = 3 ^ 7 = 4 -> B = 4
+B= 4 ^ C ^ 7
+3 ^
+
+16:
+B = 0
+B = 0 ^ 7 = 7
+B = 7 ^ C = 7 -> C = 0
+BXL 7 = 7 ^ 7 = 0 -> B = 0
+BST 4 = A ≡ 0 mod 8
+
+
+last
+
+A ≡ 0 (mod 128)
