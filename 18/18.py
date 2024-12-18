@@ -41,11 +41,11 @@ class Pos(NamedTuple):
     col: int
 
 
-input = set()
-for line in get_file_contents(INPUT_FILE)[0][:first_bytes]:
+input = list()
+for line in get_file_contents(INPUT_FILE)[0]:
     line_split = line.split(',')
 
-    input.add(Pos(int(line_split[1]), int(line_split[0])))
+    input.append(Pos(int(line_split[1]), int(line_split[0])))
 
 # pprint.pprint(input)
 
@@ -109,7 +109,7 @@ class PriorityQueue:
         return len(self.buffer)
 
 
-def a_star(start: Pos, end: Pos):
+def a_star(input, start: Pos, end: Pos):
     myqueue = PriorityQueue()
     myqueue.put(start, 0)
 
@@ -138,14 +138,17 @@ def a_star(start: Pos, end: Pos):
 
 
 with PrintTiming('a'):
-    _, cost = a_star(Pos(0, 0), Pos(size-1, size-1))
+    _, cost = a_star(input[:first_bytes], Pos(0, 0), Pos(size-1, size-1))
 
 print('a:', cost[Pos(size-1, size-1)])
 
+with PrintTiming('b'):
+    try:
+        real_input = set(input[:first_bytes])
+        for cur_first_bytes in range(first_bytes + 1, len(input)):
+            _, cost = a_star(real_input, Pos(0, 0), Pos(size-1, size-1))
+    except:
+        pass
+    block_y, block_x = input[cur_first_bytes - 1]
 
-# with PrintTiming('b'):
-#     cur_pos = Pos(1, 1)
-#     lowest_cost_for_pos = dict()
-#     finished = []
-#     i = 0
-#     _, cost = a_star(Pos(1, 1), Pos(size, size))
+print(f'b: {block_x},{block_y}')
