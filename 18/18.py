@@ -78,13 +78,13 @@ def print_matrix(matrix, path=None):
 def get_neighbors(input, pos: Pos):
     res = []
 
-    if input[pos.row-1][pos.col] != '#':
+    if pos.row > 0 and Pos(pos.row-1, pos.col) not in input:
         res.append(Pos(pos.row-1, pos.col))
-    if input[pos.row][pos.col+1] != '#':
+    if pos.col < size - 1 and Pos(pos.row, pos.col+1) not in input:
         res.append(Pos(pos.row, pos.col+1))
-    if input[pos.row+1][pos.col] != '#':
+    if pos.row < size - 1 and Pos(pos.row+1, pos.col) not in input:
         res.append(Pos(pos.row+1, pos.col))
-    if input[pos.row][pos.col-1] != '#':
+    if pos.col > 0 and Pos(pos.row, pos.col-1) not in input:
         res.append(Pos(pos.row, pos.col-1))
     return res
 
@@ -111,7 +111,7 @@ class PriorityQueue:
 
 def a_star(start: Pos, end: Pos):
     myqueue = PriorityQueue()
-    myqueue.put(Pos(1, 1), 0)
+    myqueue.put(start, 0)
 
     # Based on https://www.redblobgames.com/pathfinding/a-star/implementation.html#python-astar
 
@@ -126,7 +126,7 @@ def a_star(start: Pos, end: Pos):
         if current_pos == end:
             break
 
-        for next in get_neighbors(matrix, current_pos):
+        for next in get_neighbors(input, current_pos):
             new_cost = cost[current_pos] + 1
             if next not in cost or new_cost < cost[next]:
                 cost[next] = new_cost
@@ -138,10 +138,14 @@ def a_star(start: Pos, end: Pos):
 
 
 with PrintTiming('a'):
-    cur_pos = Pos(1, 1)
-    lowest_cost_for_pos = dict()
-    finished = []
-    i = 0
-    _, cost = a_star(Pos(1, 1), Pos(size, size))
+    _, cost = a_star(Pos(0, 0), Pos(size-1, size-1))
 
-print('a:', cost[Pos(size, size)])
+print('a:', cost[Pos(size-1, size-1)])
+
+
+# with PrintTiming('b'):
+#     cur_pos = Pos(1, 1)
+#     lowest_cost_for_pos = dict()
+#     finished = []
+#     i = 0
+#     _, cost = a_star(Pos(1, 1), Pos(size, size))
