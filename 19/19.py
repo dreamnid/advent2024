@@ -45,42 +45,49 @@ for towel in towels:
     first_letter_towels[towel[0]].append(towel)
 
 # print(towels)
-count = 0
-for desired_i, desired in enumerate(file_contents[1]):
-    # print(desired_i, 'desired:', desired, end='')
-    # https://www.hellointerview.com/learn/code/dynamic-programming/word-break#alternative-solution
-    dp = [False] * (len(desired) + 1)
-    dp[0] = True
 
-    for i in range(1, len(desired) + 1):
-        for towel in towels:
-            if i >= len(towel) and dp[i-len(towel)]:
-                sub = desired[i-len(towel):i]
-                if sub == towel:
-                    dp[i] = True
-                    break
-    if dp[len(desired)]:
-        count += 1
-        # print(' found', end='')
-    # print()
-    # queue = [Data('', towels)]
-    # while queue:
-    #     cur_data = queue.pop()
-    #     used_towels = [cur_towel for cur_towel in first_letter_towels[desired[len(cur_data.design)]]
-    #                    if desired[len(cur_data.design):].startswith(cur_towel)
-    #                    ]
-    #     # used_towels = [cur_towel for cur_towel, towel_cnt in cur_data.avail.items()
-    #     #                if desired[len(cur_data.design):].startswith(cur_towel)
-    #     #                ]
-    #     for cur_towel in used_towels:
-    #         if cur_data.design + cur_towel == desired:
-    #             count += 1
-    #             queue = []
-    #             print(' found!', end='')
-    #             break
-    #         new_towels = cur_data.avail.copy()
-    #         new_towels[cur_towel] -= 1
-    #         queue.append(Data(cur_data.design + cur_towel, new_towels))
-    # print()
+def solver(all_variations=False):
+    count = 0
+    for desired_i, desired in enumerate(file_contents[1]):
+        # print(desired_i, 'desired:', desired, end='')
+        # https://www.hellointerview.com/learn/code/dynamic-programming/word-break#alternative-solution
+        dp = [False] * (len(desired) + 1)
+        dp[0] = True
 
-print('a', count)
+        for i in range(1, len(desired) + 1):
+            for towel in towels:
+                if i >= len(towel) and dp[i-len(towel)]:
+                    sub = desired[i-len(towel):i]
+                    if sub == towel:
+                        dp[i] = True
+                        break
+        if dp[len(desired)]:
+            if not all_variations:
+                count += 1
+                # print(' found', end='')
+            else:
+                queue = [Data('', towels)]
+                while queue:
+                    cur_data = queue.pop()
+                    used_towels = [cur_towel for cur_towel in towels
+                                   if desired[len(cur_data.design):].startswith(cur_towel)
+                                   and (len(cur_data.design + cur_towel) <= len(desired))
+                                   ]
+                    # used_towels = [cur_towel for cur_towel, towel_cnt in cur_data.avail.items()
+                    #                if desired[len(cur_data.design):].startswith(cur_towel)
+                    #                ]
+                    for cur_towel in used_towels:
+                        if cur_data.design + cur_towel == desired:
+                            count += 1
+                            # print(' found!', end='')
+                            # break
+                        new_towels = cur_data.avail.copy()
+                        new_towels[cur_towel] -= 1
+                        queue.append(Data(cur_data.design + cur_towel, new_towels))
+                # print()
+    return count
+
+with PrintTiming('a'):
+    print('a', solver(all_variations=False))
+with PrintTiming('b'):
+    print('b', solver(all_variations=True))
