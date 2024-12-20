@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import heapq
+import pprint
 from collections import Counter, defaultdict, deque
 from copy import deepcopy
 from enum import IntEnum
@@ -139,29 +140,35 @@ with PrintTiming('a'):
         for wall, dir in walls:
             match dir:
                 case Dir.UP:
-                    if input[wall.row-1][wall.col] == '.' and (wall, Axis.Y) not in walls_tried:
-                        next_walls_to_try.append(wall)
+                    if input[wall.row-1][wall.col] != '#' and (wall, Axis.Y) not in walls_tried:
+                        next_walls_to_try.append((wall, Pos(wall.row-1, wall.col)))
                         walls_tried.add((wall, Axis.Y))
                 case Dir.RIGHT:
-                    if input[wall.row][wall.col+1] == '.' and (wall, Axis.X) not in walls_tried:
-                        next_walls_to_try.append(wall)
+                    if input[wall.row][wall.col+1] != '#' and (wall, Axis.X) not in walls_tried:
+                        next_walls_to_try.append((wall, Pos(wall.row, wall.col+1)))
                     walls_tried.add((wall, Axis.X))
                 case Dir.DOWN:
-                    if input[wall.row+1][wall.col] == '.' and (wall, Axis.Y) not in walls_tried:
-                        next_walls_to_try.append(wall)
+                    if input[wall.row+1][wall.col] != '#' and (wall, Axis.Y) not in walls_tried:
+                        next_walls_to_try.append((wall, Pos(wall.row+1, wall.col)))
                         walls_tried.add((wall, Axis.Y))
                 case Dir.LEFT:
-                    if input[wall.row][wall.col-1] == '.' and (wall, Axis.X) not in walls_tried:
-                        next_walls_to_try.append(wall)
+                    if input[wall.row][wall.col-1] != '#' and (wall, Axis.X) not in walls_tried:
+                        next_walls_to_try.append((wall, Pos(wall.row, wall.col-1)))
                         walls_tried.add((wall, Axis.X))
 
-        for next_wall in next_walls_to_try:
-            new_input = deepcopy(input)
-            new_input[next_wall.row][next_wall.col] = '.'
+        for next_wall, next_track in next_walls_to_try:
+            if next_track in cost:
+                # print(next_wall, 'cached')
+                savings[cost[next_track] - cost[node] - 2] += 1
+            else:
+                # print(next_wall, 'not cached')
 
-            new_path_nodes, new_cost = a_star(new_input, start_pos, end_pos)
-            new_len = new_cost[end_pos]
-            savings[original_cost - new_len] += 1
+                new_input = deepcopy(input)
+                new_input[next_wall.row][next_wall.col] = '.'
+
+                new_path_nodes, new_cost = a_star(new_input, start_pos, end_pos)
+                new_len = new_cost[end_pos]
+                savings[original_cost - new_len] += 1
 
 # pprint.pprint(savings)
 print('a', sum([num for saving, num in savings.items() if saving >= 100]))
