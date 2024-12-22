@@ -28,7 +28,8 @@ if __name__ == '__main__':
         from util import *
 
 INPUT_FILE='22-input.txt'
-# INPUT_FILE='22a-example.txt'
+INPUT_FILE='22a-example.txt'
+INPUT_FILE='22b-example.txt'
 
 input = [line for line in get_file_contents(INPUT_FILE)[0]]
 
@@ -52,14 +53,48 @@ def next_secret(num):
 #     print(f'{secret:#026b} {secret}')
 #     print('------'*10)
 #     # print(i, secret)
-
+# input = ['123']
+new_secrets: list[int] = []
+prices: list[list[int]] = []
+price_changes: list[list[int]] = []
 with PrintTiming('a'):
-    res = []
     for line in input:
         secret = int(line)
+        cur_prices = [secret % 10]
+        cur_price_changes = []
+        cur_highest_price = 0
         for i in range(2000):
             secret = next_secret(secret)
-        res.append(secret)
+            cur_price = secret % 10
+            if cur_price > cur_highest_price:
+                cur_highest_price = cur_price
+            cur_price_changes.append(cur_price - cur_prices[-1])
+            cur_prices.append(cur_price)
+        new_secrets.append(secret)
+        prices.append(cur_prices)
+        price_changes.append(cur_price_changes)
 
-# pprint.pprint(res)
-print('a', sum(res))
+print('a', sum(new_secrets))
+
+
+pprint.pprint([[(prices[i][j], price_change) for j, price_change in enumerate(cur_price_changes)] for i, cur_price_changes in enumerate(price_changes)])
+def find_change_idx(desired_seq: list[int], changes: list[int]):
+    """Find price for the given change sequence"""
+    seq_i = 0
+    for i, change in enumerate(changes):
+        if change == desired_seq[seq_i]:
+            if seq_i == 3:
+                return i
+            seq_i += 1
+        else:
+            seq_i = 0
+    return 0
+
+
+monkey_bought_price: list[int] = []
+for i in range(len(input)):
+    change_idx = find_change_idx([-1,-1,0,2], price_changes[i])
+    monkey_bought_price.append(prices[i][change_idx+1])
+
+pprint.pprint(monkey_bought_price)
+print('b:', sum(monkey_bought_price))
