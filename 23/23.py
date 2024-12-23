@@ -45,33 +45,20 @@ class Data(NamedTuple):
     nodes: set[str]
     last_node_added: str
 
-
-# interconnected = set()
-# node_i = 0
-# max_size = 0
-# max_interconnected = None
-# for node, cur_neighbors in neighbors.items():
-#     queue = deque([Data({node}, node)])
-#     queue_i = 0
-#
-#     while queue:
-#         cur_data = queue.popleft()
-#         for neigh in neighbors[cur_data.last_node_added]:
-#             if neigh == node and len(cur_data.nodes) == 4:
-#                 if len(cur_data.nodes) > max_size:
-#                     max_interconnected = cur_data.nodes
-#                     max_size = len(cur_data.nodes)
-#                 # interconnected.add(tuple(sorted(list(cur_data.nodes))))
-#             elif neigh not in cur_data.nodes and all(cur_node in neighbors[neigh] for cur_node in cur_data.nodes):
-#                 queue.append(Data({neigh, *cur_data.nodes}, neigh))
-#         # print(queue)
-#         queue_i += 1
-#         if queue_i % 1000 == 0:
-#             # print(f'{node_i}/{len(input)}', queue_i, max_size, max_interconnected)
-#             print(f'{node_i}/{len(input)}', queue_i, cur_data.last_node_added, cur_data.nodes)
-#     node_i += 1
+with PrintTiming('A'):
+    interconnected = set()
+    for node, cur_neighbors in neighbors.items():
+        for second_neighbor in cur_neighbors:
+            if second_neighbor == node:
+                continue
+            for third_neighbor in neighbors[second_neighbor]:
+                if third_neighbor == node:
+                    continue
+                if node in neighbors[third_neighbor]:
+                    key = tuple(sorted([node, second_neighbor, third_neighbor]))
+                    interconnected.add(key)
 # pprint.pprint(interconnected)
-# print('a', sum(any(j.startswith('t') for j in i) for i in interconnected if len(i) == 3))
+print('a', sum(any(j.startswith('t') for j in i) for i in interconnected if len(i) == 3))
 
 N = neighbors
 
@@ -94,11 +81,12 @@ def BronKerbosch1(P, R: set | None = None, X: set |None = None):
         X.add(v)
 
 
-max_interconnected_size = 0
-max_interconnected_nodes = None
-for cur_interconnected in BronKerbosch1(neighbors.keys()):
-    if len(cur_interconnected) > max_interconnected_size:
-        max_interconnected_size = len(cur_interconnected)
-        max_interconnected_nodes = cur_interconnected
+with PrintTiming('b'):
+    max_interconnected_size = 0
+    max_interconnected_nodes = None
+    for cur_interconnected in BronKerbosch1(neighbors.keys()):
+        if len(cur_interconnected) > max_interconnected_size:
+            max_interconnected_size = len(cur_interconnected)
+            max_interconnected_nodes = cur_interconnected
 
 print('b', ','.join(sorted(list(max_interconnected_nodes))))
