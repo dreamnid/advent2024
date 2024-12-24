@@ -30,6 +30,7 @@ if __name__ == '__main__':
 INPUT_FILE='24-input.txt'
 # INPUT_FILE='24a-example.txt'
 # INPUT_FILE='24a2-example.txt'
+# INPUT_FILE='24b1-example.txt'
 
 file_contents = get_file_contents((INPUT_FILE))
 input = [line for line in file_contents[0]]
@@ -54,7 +55,6 @@ gate_regex = re.compile(r'(\w+) (\w+) (\w+) -> (\w+)')
 next_wire_value = wire_value.copy()
 queued = deque()
 
-
 for line in file_contents[1]:
     matches = gate_regex.match(line)
 
@@ -73,16 +73,28 @@ while queued:
         queued.append(attempt)
 
 # Convert the zXX values to decimal, z_0 is the LSB
-res = []
+a_res = 0
 z_i = 0
 while True:
     key = f'z{z_i:02d}'
     if key in wire_value:
-        res.append(str(next_wire_value[key]))
+        a_res += next_wire_value[key] << z_i
     else:
         break
     z_i += 1
-final_res = int(''.join(reversed(res)), 2)
-print('a', final_res)
-
-print(f'{final_res:b}')
+#
+print('a', a_res)
+#
+#
+# digit_i = 0
+# add_res = 0
+# while True:
+#     x_key = f'x{digit_i:02d}'
+#     y_key = f'y{digit_i:02d}'
+#
+#     if x_key in wire_value:
+#         add_res += (wire_value[x_key] + wire_value[y_key]) << digit_i
+#     else:
+#         break
+#     digit_i += 1
+# print(add_res)
